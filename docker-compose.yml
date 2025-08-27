@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  lua-envoy:
+    image: envoyproxy/envoy:v1.33-latest
+    ports:
+      - "10000:10000"  # Lua simple service
+      - "9901:9901"    # Admin interface
+    volumes:
+      - ./lua_simple_test.yaml:/etc/envoy/envoy.yaml:ro
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
+    
+  wasm-envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-wasm
+    ports:
+      - "10001:10001"  # WASM simple service  
+      - "9902:9902"    # Admin interface
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
+
+  lua-load-gen:
+    image: curlimages/curl:latest
+    depends_on:
+      - lua-envoy
+    command: ["sh", "-c", "while true; do curl -s http://lua-envoy:10000/ && echo ' - '$(date); sleep 0.2; done"]
+    restart: unless-stopped
+
+  wasm-load-gen:
+    image: curlimages/curl:latest
+    depends_on:
+      - wasm-envoy  
+    command: ["sh", "-c", "while true; do curl -s http://wasm-envoy:10001/ && echo ' - '$(date) || echo 'Failed - '$(date); sleep 0.2; done"]
+    restart: unless-stopped
+
+networks:
+  default:
+    driver: bridge
