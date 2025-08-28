@@ -18,11 +18,31 @@ docker stats wasm-lua-test-lua-envoy-1 wasm-lua-test-wasm-envoy-1
 docker stats --no-stream wasm-lua-test-lua-envoy-1 wasm-lua-test-wasm-envoy-1
 ```
 
-Example output:
 ```
-CONTAINER ID   NAME                         CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O    PIDS
-5088bd126756   wasm-lua-test-lua-envoy-1    1.09%     17.14MiB / 7.656GiB   0.22%     528kB / 460kB   4.1kB / 0B   24
-0dbafc7343b2   wasm-lua-test-wasm-envoy-1   1.29%     118.5MiB / 7.656GiB   1.51%     291kB / 254kB   0B / 0B      31
+# concurrency: 1
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O   PIDS
+0977bbcaf325   main-lua-envoy-1    0.34%     19.48MiB / 15.6GiB   0.12%     31.1kB / 25.9kB   0B / 0B     10
+59bdea6cc12b   main-wasm-envoy-1   0.38%     128.7MiB / 15.6GiB   0.81%     29.2kB / 24.4kB   0B / 0B     25
+
+# concurrency: 2
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O         BLOCK I/O   PIDS
+10559651531b   main-lua-envoy-1    0.41%     22.83MiB / 15.6GiB   0.14%     337kB / 293kB   0B / 0B     12
+26c535bbd7d6   main-wasm-envoy-1   0.35%     132.5MiB / 15.6GiB   0.83%     335kB / 291kB   0B / 0B     27
+
+# concurrency: 4
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O   PIDS
+1a6dfea5b398   main-lua-envoy-1    0.49%     21.37MiB / 15.6GiB   0.13%     49kB / 41.6kB     0B / 0B     16
+960467ffbc23   main-wasm-envoy-1   0.45%     157.8MiB / 15.6GiB   0.99%     46.6kB / 39.5kB   0B / 0B     31
+
+# concurrency: 8
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O   PIDS
+0cb7fecc051f   main-lua-envoy-1    0.63%     23.88MiB / 15.6GiB   0.15%     33kB / 27.7kB     0B / 0B     24
+a03c26738b70   main-wasm-envoy-1   0.62%     198.9MiB / 15.6GiB   1.25%     30.6kB / 25.6kB   0B / 0B     39
+
+# concurrency: 16
+CONTAINER ID   NAME                CPU %     MEM USAGE / LIMIT    MEM %     NET I/O           BLOCK I/O   PIDS
+1df08c7c1a72   main-lua-envoy-1    0.89%     27.49MiB / 15.6GiB   0.17%     32.5kB / 27.2kB   0B / 0B     40
+c42ec15f8ea6   main-wasm-envoy-1   0.80%     284.5MiB / 15.6GiB   1.78%     30.2kB / 25.1kB   0B / 0B     55
 ```
 
 Additional memory monitoring options:

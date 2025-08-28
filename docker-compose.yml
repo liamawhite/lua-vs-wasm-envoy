@@ -8,7 +8,7 @@ services:
       - "9901:9901"    # Admin interface
     volumes:
       - ./lua_simple_test.yaml:/etc/envoy/envoy.yaml:ro
-    command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "1"]
     
   wasm-envoy:
     build:
@@ -17,7 +17,7 @@ services:
     ports:
       - "10001:10001"  # WASM simple service  
       - "9902:9902"    # Admin interface
-    command: ["envoy", "-c", "/etc/envoy/envoy.yaml"]
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "1"]
 
   lua-load-gen:
     image: curlimages/curl:latest
