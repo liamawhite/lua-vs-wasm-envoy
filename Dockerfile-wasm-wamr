@@ -1,0 +1,16 @@
+FROM golang:1.24.4 AS builder
+
+WORKDIR /app
+COPY simple_filter.go .
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
+# Build WASM plugin with Go 1.24+ and correct flags
+ENV GOOS=wasip1
+ENV GOARCH=wasm
+RUN go build -buildmode=c-shared -o simple_filter.wasm simple_filter.go
+
+FROM envoyproxy/envoy:v1.33-latest
+COPY --from=builder /app/simple_filter.wasm /etc/envoy/simple_filter.wasm
+COPY wasm_wamr_simple_test.yaml /etc/envoy/envoy.yaml

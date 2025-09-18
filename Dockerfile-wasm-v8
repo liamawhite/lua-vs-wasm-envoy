@@ -13,4 +13,4 @@ RUN go build -buildmode=c-shared -o simple_filter.wasm simple_filter.go
 
 FROM envoyproxy/envoy:v1.33-latest
 COPY --from=builder /app/simple_filter.wasm /etc/envoy/simple_filter.wasm
-COPY wasm_simple_test.yaml /etc/envoy/envoy.yaml
+COPY wasm_v8_simple_test.yaml /etc/envoy/envoy.yaml

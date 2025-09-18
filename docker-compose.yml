@@ -8,16 +8,25 @@ services:
       - "9901:9901"    # Admin interface
     volumes:
       - ./lua_simple_test.yaml:/etc/envoy/envoy.yaml:ro
-    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "1"]
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "16"]
     
-  wasm-envoy:
+  wasm-v8-envoy:
     build:
       context: .
-      dockerfile: Dockerfile-wasm
+      dockerfile: Dockerfile-wasm-v8
     ports:
       - "10001:10001"  # WASM simple service  
       - "9902:9902"    # Admin interface
-    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "1"]
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "16"]
+
+  wasm-wamr-envoy:
+    build:
+      context: .
+      dockerfile: Dockerfile-wasm-wamr
+    ports:
+      - "10002:10002"  # WASM simple service  
+      - "9903:9903"    # Admin interface
+    command: ["envoy", "-c", "/etc/envoy/envoy.yaml", "--concurrency", "16"]
 
   lua-load-gen:
     image: curlimages/curl:latest
@@ -26,11 +35,18 @@ services:
     command: ["sh", "-c", "while true; do curl -s http://lua-envoy:10000/ && echo ' - '$(date); sleep 0.2; done"]
     restart: unless-stopped
 
-  wasm-load-gen:
+  wasm-v8-load-gen:
     image: curlimages/curl:latest
     depends_on:
-      - wasm-envoy  
-    command: ["sh", "-c", "while true; do curl -s http://wasm-envoy:10001/ && echo ' - '$(date) || echo 'Failed - '$(date); sleep 0.2; done"]
+      - wasm-v8-envoy
+    command: ["sh", "-c", "while true; do curl -s http://wasm-v8-envoy:10001/ && echo ' - '$(date) || echo 'Failed - '$(date); sleep 0.2; done"]
+    restart: unless-stopped
+
+  wasm-wamr-load-gen:
+    image: curlimages/curl:latest
+    depends_on:
+      - wasm-wamr-envoy  
+    command: ["sh", "-c", "while true; do curl -s http://wasm-wamr-envoy:10002/ && echo ' - '$(date) || echo 'Failed - '$(date); sleep 0.2; done"]
     restart: unless-stopped
 
 networks:
